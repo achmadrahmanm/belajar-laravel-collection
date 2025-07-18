@@ -217,4 +217,33 @@ class CollectionTest extends TestCase
         $joined = $collection->join(', ', '_');
         $this->assertEquals('John, Jane_Doe', $joined);
     }
+
+    public function testFilter()
+    {
+        $collection = collect(["eko" => 1, "budi" => 2, "joko" => 3, "doni" => 4, "siti" => 5]);
+
+        $filtered = $collection->filter(function ($value, $key) {
+            return $value > 2;
+        });
+
+        $this->assertEquals([
+            "joko" => 3,
+            "doni" => 4,
+            "siti" => 5
+        ], $filtered->all());
+    }
+
+    public function testFilterIndex()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        $filtered = $collection->filter(function ($value, $key) {
+            return $value % 2 !== 0; // Keep only odd numbers
+        });
+
+        // $filtered->values()->all() returns the values without keys
+        // $filtered->all() returns the original keys
+
+        $this->assertEquals([1, 3, 5], $filtered->values()->all());
+    }
 }
