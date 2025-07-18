@@ -433,4 +433,20 @@ class CollectionTest extends TestCase
             return $value > 3;
         }));
     }
+
+    public function testRandom()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Retrieve a random item from the collection
+        $randomItem = $collection->random();
+        $this->assertTrue($collection->contains($randomItem));
+
+        // Retrieve multiple random items from the collection
+        $randomItems = $collection->random(2);
+        $this->assertCount(2, $randomItems);
+        foreach ($randomItems as $item) {
+            $this->assertTrue($collection->contains($item));
+        }
+    }
 }
