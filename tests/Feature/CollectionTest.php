@@ -475,4 +475,92 @@ class CollectionTest extends TestCase
         // Check if the collection contains exactly one item
         $this->assertFalse($collection->containsOneItem());
     }
+
+    public function testOrdering()
+    {
+        $collection = collect([5, 3, 1, 4, 2]);
+
+        // Sort the collection in ascending order
+        $sorted = $collection->sort();
+        $this->assertEquals([1, 2, 3, 4, 5], $sorted->values()->all());
+
+        // Sort the collection in descending order
+        $sortedDesc = $collection->sortDesc();
+        $this->assertEquals([5, 4, 3, 2, 1], $sortedDesc->values()->all());
+
+        // Sort the collection by a custom function
+        $sortedBy = $collection->sortBy(function ($item) {
+            return -$item; // Sort by negative value (descending order)
+        });
+        $this->assertEquals([5, 4, 3, 2, 1], $sortedBy->values()->all());
+
+        // Sort the collection by a custom function in descending order
+        $sortedByDesc = $collection->sortByDesc(function ($item) {
+            return $item; // Sort by value (descending order)
+        });
+        $this->assertEquals([5, 4, 3, 2, 1], $sortedByDesc->values()->all());
+
+        // Sort the collection by keys in ascending order
+        $collectionWithKeys = collect([3 => 'a', 1 => 'b', 2 => 'c']);
+        $sortedKeys = $collectionWithKeys->sortKeys();
+        $this->assertEquals([1 => 'b', 2 => 'c', 3 => 'a'], $sortedKeys->all());
+
+        // Sort the collection by keys in descending order
+        $sortedKeysDesc = $collectionWithKeys->sortKeysDesc();
+        $this->assertEquals([3 => 'a', 2 => 'c', 1 => 'b'], $sortedKeysDesc->all());
+
+        // Reverse the collection
+        $reversed = $collection->reverse();
+        $this->assertEquals([2, 4, 1, 3, 5], $reversed->values()->all());
+    }
+
+    public function testAggregation()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Calculate the sum of the collection
+        $sum = $collection->sum();
+        $this->assertEquals(15, $sum);
+
+        // Calculate the average of the collection
+        $average = $collection->avg();
+        $this->assertEquals(3, $average);
+
+        // Find the maximum value in the collection
+        $max = $collection->max();
+        $this->assertEquals(5, $max);
+
+        // Find the minimum value in the collection
+        $min = $collection->min();
+        $this->assertEquals(1, $min);
+
+        // Count the occurrences of each item in the collection
+        $counted = $collection->countBy();
+        $this->assertEquals([
+            1 => 1,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            5 => 1
+        ], $counted->all());
+    }
+
+    public function testReduce()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Reduce the collection to a single value
+        $reduced = $collection->reduce(function ($carry, $item) {
+            return $carry + $item;
+        }, 0);
+
+        $this->assertEquals(15, $reduced);
+
+        // Reduce the collection to a single value with an initial value
+        $reducedWithInitial = $collection->reduce(function ($carry, $item) {
+            return $carry * $item;
+        }, 1);
+
+        $this->assertEquals(120, $reducedWithInitial);
+    }
 }
