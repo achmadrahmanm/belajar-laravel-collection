@@ -406,4 +406,31 @@ class CollectionTest extends TestCase
         $this->assertCount(3, $chunkedWithCallback);
         $this->assertEquals(['Item: 1', 'Item: 2', 'Item: 3'], $chunkedWithCallback[0]->values()->all());
     }
+
+    public function testRetrieve()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Retrieve the first item in the collection
+        $this->assertEquals(1, $collection->first());
+
+        // Retrieve the first item or fail if the collection is empty
+        $this->assertEquals(1, $collection->firstOrFail());
+
+        // Retrieve the first item that matches a condition
+        $this->assertEquals(3, $collection->first(function ($value, $key) {
+            return $value > 2;
+        }));
+
+        // Retrieve the first item where a specific key matches a value
+        $this->assertEquals(3, $collection->firstWhere(null, 3));
+
+        // Retrieve the last item in the collection
+        $this->assertEquals(5, $collection->last());
+
+        // Retrieve the last item that matches a condition
+        $this->assertEquals(5, $collection->last(function ($value, $key) {
+            return $value > 3;
+        }));
+    }
 }
