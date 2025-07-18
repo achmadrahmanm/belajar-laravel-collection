@@ -203,4 +203,18 @@ class CollectionTest extends TestCase
 
         $this->assertEquals([['Reading', 'Traveling'], ['Cooking'], ['Gaming', 'Hiking']], $flatMapped->all());
     }
+
+    public function testJoin()
+    {
+        $collection = collect([
+            'John',
+            'Jane',
+            'Doe'
+        ]);
+
+        $joined = $collection->join(', ');
+        $this->assertEquals('John, Jane, Doe', $joined);
+        $joined = $collection->join(', ', '_');
+        $this->assertEquals('John, Jane_Doe', $joined);
+    }
 }
