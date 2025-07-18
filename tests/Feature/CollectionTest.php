@@ -246,4 +246,22 @@ class CollectionTest extends TestCase
 
         $this->assertEquals([1, 3, 5], $filtered->values()->all());
     }
+
+    public function testPartition()
+    {
+        $collection = collect([
+            "eko" => 1,
+            "budi" => 2,
+            "joko" => 3,
+            "doni" => 4,
+            "siti" => 5
+        ]);
+
+        [$result1, $result2] = $collection->partition(function ($value, $key) {
+            return $value % 2 === 0; // Even numbers
+        });
+
+        $this->assertEquals(["budi" => 2, "doni" => 4], $result1->all()); // Even numbers
+        $this->assertEquals(["eko" => 1, "joko" => 3, "siti" => 5], $result2->all()); // Odd numbers
+    }
 }
