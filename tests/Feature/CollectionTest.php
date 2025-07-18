@@ -264,4 +264,39 @@ class CollectionTest extends TestCase
         $this->assertEquals(["budi" => 2, "doni" => 4], $result1->all()); // Even numbers
         $this->assertEquals(["eko" => 1, "joko" => 3, "siti" => 5], $result2->all()); // Odd numbers
     }
+
+    public function testTesting()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Test if the collection is empty
+        $this->assertFalse($collection->isEmpty());
+
+        // Test if the collection contains a specific item
+        $this->assertTrue($collection->contains(3));
+        $this->assertFalse($collection->contains(6));
+
+        // Test the count of items in the collection
+        $this->assertEquals(5, $collection->count());
+
+        // Test the first and last items in the collection
+        $this->assertEquals(1, $collection->first());
+        $this->assertEquals(5, $collection->last());
+
+        // Test if the collection has a specific key
+        $this->assertTrue($collection->has(0)); // Key 0 exists
+        $this->assertFalse($collection->has(10)); // Key 10 does not exist
+
+        // Test if the collection has any of the specified keys
+        $this->assertTrue($collection->hasAny([0, 1])); // At least one key exists
+        $this->assertFalse($collection->hasAny([10, 11])); // None of the keys exist
+
+        // Test if the collection contains a specific value
+        $this->assertTrue($collection->contains(function ($value, $key) {
+            return $value === 3; // Value 3 exists
+        }));
+        $this->assertFalse($collection->contains(function ($value, $key) {
+            return $value === 10; // Value 10 does not exist
+        }));
+    }
 }
