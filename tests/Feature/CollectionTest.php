@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Data\Person;
+use Illuminate\Support\LazyCollection;
 
 class CollectionTest extends TestCase
 {
@@ -562,5 +563,19 @@ class CollectionTest extends TestCase
         }, 1);
 
         $this->assertEquals(120, $reducedWithInitial);
+    }
+
+    public function testLazyCollection()
+    {
+        $lazyCollection = LazyCollection::make(function () {
+            $value = 0;
+            while (true) {
+                yield ++$value;
+            }
+        });
+
+        $result = $lazyCollection->take(5)->toArray();
+
+        $this->assertEquals([1, 2, 3, 4, 5], $result);
     }
 }
