@@ -449,4 +449,30 @@ class CollectionTest extends TestCase
             $this->assertTrue($collection->contains($item));
         }
     }
+
+    public function testCheckingExistence()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Check if the collection is empty
+        $this->assertFalse($collection->isEmpty());
+
+        // Check if the collection is not empty
+        $this->assertTrue($collection->isNotEmpty());
+
+        // Check if the collection contains a specific item
+        $this->assertTrue($collection->contains(3));
+        $this->assertFalse($collection->contains(6));
+
+        // Check if the collection contains a specific value using a callback
+        $this->assertTrue($collection->contains(function ($value, $key) {
+            return $value === 3;
+        }));
+        $this->assertFalse($collection->contains(function ($value, $key) {
+            return $value === 10;
+        }));
+
+        // Check if the collection contains exactly one item
+        $this->assertFalse($collection->containsOneItem());
+    }
 }
