@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Data\Person;
 
 class CollectionTest extends TestCase
 {
@@ -34,6 +35,26 @@ class CollectionTest extends TestCase
         $this->assertEquals(15, $sum);
     }
 
+    public function testCrud()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Test adding an item
+        $collection->push(6);
+        $this->assertEquals(6, $collection->last());
+
+        // Test removing an item
+        $collection->pop();
+        $this->assertEquals(5, $collection->count());
+
+        // Test checking if an item exists
+        $this->assertTrue($collection->contains(3));
+        $this->assertFalse($collection->contains(6));
+
+        // Test getting an item by key
+        $this->assertEquals(2, $collection[1]);
+    }
+
     public function testCollectionMethods()
     {
         $collection = collect([1, 2, 3, 4, 5]);
@@ -55,5 +76,66 @@ class CollectionTest extends TestCase
             return $carry + $item;
         }, 0);
         $this->assertEquals(15, $sum);
+    }
+
+    public function testMapIntoCollection()
+    {
+        $collection = collect(['John', 'Jane', 'Doe']);
+        $people = $collection->mapInto(Person::class);
+
+        $this->assertCount(3, $people);
+        $this->assertInstanceOf(Person::class, $people[0]);
+        $this->assertEquals('John', $people[0]->name);
+        $this->assertEquals('Jane', $people[1]->name);
+        $this->assertEquals('Doe', $people[2]->name);
+    }
+
+    public function testMapSpread()
+    {
+        $collection = collect([
+            ['John', 30],
+            ['Jane', 25],
+            ['Doe', 40],
+        ]);
+
+        $people = $collection->mapSpread(function ($name, $age) {
+            return new Person("$name is $age years old");
+        });
+
+        $this->assertEquals([
+            new Person('John is 30 years old'),
+            new Person('Jane is 25 years old'),
+            new Person('Doe is 40 years old')
+        ], $people->all());
+    }
+
+    public function testMapToGroup()
+    {
+        $collection = collect([
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+            ['name' => 'Doe', 'age' => 40],
+            ['name' => 'Alice', 'age' => 30],
+            ['name' => 'Bob', 'age' => 25],
+            ['name' => 'Charlie', 'age' => 40],
+            ['name' => 'Eve', 'age' => 30],
+            ['name' => 'Frank', 'age' => 25],
+            ['name' => 'Grace', 'age' => 40],
+            ['name' => 'Hank', 'age' => 30],
+
+        ]);
+
+        $grouped = $collection->mapToGroups(function ($item) {
+            return [
+                $item['age'] => $item['name']
+            ];
+        });
+
+        echo $grouped;
+        $this->assertEquals([
+            "30" => collect(['John', 'Alice', 'Eve', 'Hank']),
+            "25" => collect(['Jane', 'Bob', 'Frank']),
+            "40" => collect(['Doe', 'Charlie', 'Grace'])
+        ], $grouped->all());
     }
 }
