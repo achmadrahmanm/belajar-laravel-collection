@@ -131,11 +131,48 @@ class CollectionTest extends TestCase
             ];
         });
 
-        echo $grouped;
+        // echo $grouped;
         $this->assertEquals([
             "30" => collect(['John', 'Alice', 'Eve', 'Hank']),
             "25" => collect(['Jane', 'Bob', 'Frank']),
             "40" => collect(['Doe', 'Charlie', 'Grace'])
         ], $grouped->all());
+    }
+
+    public function testZip()
+    {
+        $collection1 = collect(['John', 'Jane', 'Doe']);
+        $collection2 = collect([30, 25, 40]);
+
+        $zipped = $collection1->zip($collection2);
+
+        $this->assertEquals([
+            collect(['John', 30]),
+            collect(['Jane', 25]),
+            collect(['Doe', 40])
+        ], $zipped->all());
+    }
+
+    public function testConcat()
+    {
+        $collection1 = collect(['John', 'Jane']);
+        $collection2 = collect(['Doe', 'Alice']);
+
+        $concatenated = $collection1->concat($collection2);
+
+        $this->assertEquals(['John', 'Jane', 'Doe', 'Alice'], $concatenated->all());
+    }
+
+    public function testCombine()
+    {
+        $keys = collect(['name', 'age']);
+        $values = collect(['John', 30]);
+
+        $combined = $keys->combine($values);
+
+        $this->assertEquals([
+            'name' => 'John',
+            'age' => 30
+        ], $combined->all());
     }
 }
