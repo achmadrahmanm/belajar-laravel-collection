@@ -343,4 +343,41 @@ class CollectionTest extends TestCase
         $sliced = $collection->slice(-2);
         $this->assertEquals([4, 5], $sliced->values()->all());
     }
+
+    public function testTakeSkip()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Take the first 3 items
+        $taken = $collection->take(3);
+        $this->assertEquals([1, 2, 3], $taken->values()->all());
+
+        // Take items until a condition is met
+        $takenUntil = $collection->takeUntil(function ($item) {
+            return $item > 3; // Stop taking when the item is greater than 3
+        });
+        $this->assertEquals([1, 2, 3], $takenUntil->values()->all());
+
+        // Take items while a condition is true
+        $takenWhile = $collection->takeWhile(function ($item) {
+            return $item < 4; // Keep taking while the item is less than 4
+        });
+        $this->assertEquals([1, 2, 3], $takenWhile->values()->all());
+
+        // Skip the first 2 items
+        $skipped = $collection->skip(2);
+        $this->assertEquals([3, 4, 5], $skipped->values()->all());
+
+        // Skip items until a condition is met
+        $skippedUntil = $collection->skipUntil(function ($item) {
+            return $item > 3; // Start skipping until the item is greater than 3
+        });
+        $this->assertEquals([4, 5], $skippedUntil->values()->all());
+
+        // Skip items while a condition is true
+        $skippedWhile = $collection->skipWhile(function ($item) {
+            return $item < 4; // Keep skipping while the item is less than 4
+        });
+        $this->assertEquals([4, 5], $skippedWhile->values()->all());
+    }
 }
