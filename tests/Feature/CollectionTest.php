@@ -299,4 +299,48 @@ class CollectionTest extends TestCase
             return $value === 10; // Value 10 does not exist
         }));
     }
+
+    public function testGrouping()
+    {
+        $collection = collect([
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+            ['name' => 'Doe', 'age' => 30],
+            ['name' => 'Alice', 'age' => 25],
+        ]);
+
+        $grouped = $collection->groupBy('age');
+
+        $this->assertEquals([
+            30 => collect([['name' => 'John', 'age' => 30], ['name' => 'Doe', 'age' => 30]]),
+            25 => collect([['name' => 'Jane', 'age' => 25], ['name' => 'Alice', 'age' => 25]])
+        ], $grouped->all());
+
+
+        $result = $collection->groupBy(function ($item) {
+            return $item['age'] >= 30 ? 'adults' : 'children';
+        });
+
+        $this->assertEquals([
+            'adults' => collect([['name' => 'John', 'age' => 30], ['name' => 'Doe', 'age' => 30]]),
+            'children' => collect([['name' => 'Jane', 'age' => 25], ['name' => 'Alice', 'age' => 25]])
+        ], $result->all());
+    }
+
+    public function testSlice()
+    {
+        $collection = collect([1, 2, 3, 4, 5]);
+
+        // Slice the collection from index 1 to the end
+        $sliced = $collection->slice(1);
+        $this->assertEqualsCanonicalizing([2, 3, 4, 5], $sliced->all());
+
+        // Slice the collection from index 1 to index 3
+        $sliced = $collection->slice(0, 2);
+        $this->assertEquals([1, 2], $sliced->values()->all());
+
+        // Slice the collection with negative offset
+        $sliced = $collection->slice(-2);
+        $this->assertEquals([4, 5], $sliced->values()->all());
+    }
 }
