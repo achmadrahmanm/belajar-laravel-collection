@@ -175,4 +175,32 @@ class CollectionTest extends TestCase
             'age' => 30
         ], $combined->all());
     }
+
+    public function testCollapse()
+    {
+        $collection = collect([
+            collect(['John', 'Jane']),
+            collect(['Doe', 'Alice']),
+            collect(['Bob'])
+        ]);
+
+        $collapsed = $collection->collapse();
+
+        $this->assertEquals(['John', 'Jane', 'Doe', 'Alice', 'Bob'], $collapsed->all());
+    }
+
+    public function testFlatMap()
+    {
+        $collection = collect([
+            ['name' => 'John', 'hobbies' => ['Reading', 'Traveling'], 'age' => 30],
+            ['name' => 'Jane', 'hobbies' => ['Cooking'], 'age' => 25],
+            ['name' => 'Doe', 'hobbies' => ['Gaming', 'Hiking'], 'age' => 40],
+        ]);
+
+        $flatMapped = $collection->flatMap(function ($item) {
+            return [$item['hobbies']];
+        });
+
+        $this->assertEquals([['Reading', 'Traveling'], ['Cooking'], ['Gaming', 'Hiking']], $flatMapped->all());
+    }
 }
