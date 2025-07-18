@@ -380,4 +380,30 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals([4, 5], $skippedWhile->values()->all());
     }
+
+    public function testChunk()
+    {
+        $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+        // Chunk the collection into groups of 3
+        $chunked = $collection->chunk(3);
+
+        $this->assertCount(3, $chunked);
+        $this->assertEquals([1, 2, 3], $chunked[0]->values()->all());
+        $this->assertEquals([4, 5, 6], $chunked[1]->values()->all());
+        $this->assertEquals([7, 8, 9], $chunked[2]->values()->all());
+
+        // Chunk the collection
+        $chunked = $collection->chunk(3);
+
+        // Apply transformation using map
+        $chunkedWithCallback = $chunked->map(function ($chunk) {
+            return $chunk->map(function ($item) {
+                return "Item: $item";
+            });
+        });
+
+        $this->assertCount(3, $chunkedWithCallback);
+        $this->assertEquals(['Item: 1', 'Item: 2', 'Item: 3'], $chunkedWithCallback[0]->values()->all());
+    }
 }
